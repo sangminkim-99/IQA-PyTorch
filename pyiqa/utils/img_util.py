@@ -45,8 +45,13 @@ def imread2tensor(img_source, rgb=False):
     if type(img_source) == bytes:
         img = Image.open(io.BytesIO(img_source))
     elif type(img_source) == str:
-        assert is_image_file(img_source), f'{img_source} is not a valid image file.'
-        img = Image.open(img_source)
+        # assert is_image_file(img_source), f'{img_source} is not a valid image file.'
+        if is_image_file(img_source):
+            img = Image.open(img_source)
+        elif img_source.endswith('.npy'):
+            img = np.load(img_source)
+            img = Image.fromarray((img * 255).astype(np.uint8))
+
     elif isinstance(img_source, Image.Image):
         img = img_source
     else:
